@@ -10,6 +10,8 @@ import sys
 import numpy as np
 import cv2
 
+from google.colab.patches import cv2_imshow
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 sys.path.append(os.path.join(ROOT_DIR, "mayavi"))
@@ -173,7 +175,13 @@ def viz_kitti_video():
     for _ in range(len(dataset)):
         img = dataset.get_image(0)
         pc = dataset.get_lidar(0)
-        cv2.imshow("video", img)
+        cv2_imshow(img)
+
+        from PIL import Image
+        im = Image.fromarray(img)
+        im.save("get_lidar.jpeg")
+
+
         draw_lidar(pc)
         raw_input()
         pc[:, 0:3] = dataset.get_calibration().project_velo_to_rect(pc[:, 0:3])
@@ -233,15 +241,24 @@ def show_image_with_boxes(img, objects, calib, show3d=True, depth=None):
         # box3d_pts_32d = calib.project_velo_to_image(box3d_pts_3d_velo)
         # img3 = utils.draw_projected_box3d(img3, box3d_pts_32d)
     # print("img1:", img1.shape)
-    cv2.imshow("2dbox", img1)
+    cv2_imshow(img1)
+    from PIL import Image
+    im = Image.fromarray(img1)
+    im.save("img1.jpeg")
     # print("img3:",img3.shape)
     # Image.fromarray(img3).show()
     show3d = True
     if show3d:
         # print("img2:",img2.shape)
-        cv2.imshow("3dbox", img2)
+        cv2_imshow(img2)
+        from PIL import Image
+        im = Image.fromarray(img2)
+        im.save("img2.jpeg")
     if depth is not None:
-        cv2.imshow("depth", depth)
+        cv2_imshow(depth)
+        from PIL import Image
+        im = Image.fromarray(depth)
+        im.save("depth.jpeg")
     
     return img1, img2
 
@@ -312,8 +329,11 @@ def show_image_with_boxes_3type(img, objects, calib, objects2d, name, objects_pr
                 img1, text_lables[n], text_pos, font, 0.5, color, 0, cv2.LINE_AA
             )
 
-    cv2.imshow("with_bbox", img1)
+    cv2_imshow(img1)
     cv2.imwrite("imgs/" + str(name) + ".png", img1)
+    from PIL import Image
+    im = Image.fromarray(img1)
+    im.save("3dpred.jpeg")
 
 
 def get_lidar_in_image_fov(
@@ -696,7 +716,11 @@ def show_lidar_on_image(pc_velo, img, calib, img_width, img_height):
             color=tuple(color),
             thickness=-1,
         )
-    cv2.imshow("projection", img)
+    from google.colab.patches import cv2_imshow
+    cv2_imshow(img)
+    from PIL import Image
+    im = Image.fromarray(img)
+    im.save("circle.jpeg")
     return img
 
 
@@ -729,7 +753,12 @@ def show_lidar_topview_with_boxes(pc_velo, objects, calib, objects_pred=None):
             top_image, gt, text_lables=lines, scores=None, thickness=1, is_gt=False
         )
 
-    cv2.imshow("top_image", top_image)
+    cv2_imshow(top_image)
+
+    from PIL import Image
+    im = Image.fromarray(top_image)
+    im.save("top.jpeg")
+
     return top_image
 
 
